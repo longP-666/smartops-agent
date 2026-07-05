@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: smartops-agent-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-smartops_agent}
+      TZ: Asia/Shanghai
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: smartops-agent-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+
+  agent-backend:
+    build:
+      context: ../agent-backend
+    container_name: smartops-agent-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/smartops_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+      DB_USERNAME: root
+      DB_PASSWORD: 123456
+      AI_ENABLED: ${AI_ENABLED:-false}
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_CHAT_MODEL: ${AI_CHAT_MODEL:-gpt-4o-mini}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+
+  agent-frontend:
+    build:
+      context: ../agent-frontend
+    container_name: smartops-agent-frontend
+    restart: unless-stopped
+    depends_on:
+      - agent-backend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+
+volumes:
+  mysql-data:
+  redis-data:

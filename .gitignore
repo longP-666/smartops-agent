@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+target/
+node_modules/
+dist/
+.env
+*.log
+*.iml
+agent-backend/target/
+agent-frontend/node_modules/
+agent-frontend/dist/
+deploy/data/
+.m2/
