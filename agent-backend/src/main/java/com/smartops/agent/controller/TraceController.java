@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +30,10 @@ public class TraceController {
 
     @GetMapping("/{traceId}")
     public ApiResponse<Map<String, Object>> detail(@PathVariable String traceId) {
-        return ApiResponse.ok(Map.of(
-                "trace", traceService.trace(traceId),
-                "steps", traceService.steps(traceId)
-        ));
+        Map<String, Object> result = new HashMap<>();
+        result.put("trace", traceService.trace(traceId));
+        result.put("steps", traceService.steps(traceId));
+        return ApiResponse.ok(result);
     }
 
     @GetMapping("/{traceId}/steps")

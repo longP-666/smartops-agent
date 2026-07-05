@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS knowledge_chunk (
     knowledge_base_id BIGINT NOT NULL,
     chunk_index INT NOT NULL,
     content TEXT NOT NULL,
-    embedding MEDIUMTEXT NOT NULL,
-    metadata JSON,
+    embedding TEXT NOT NULL,
+    metadata TEXT,
     create_time DATETIME NOT NULL,
     INDEX idx_document_id (document_id),
     INDEX idx_kb_id (knowledge_base_id)
@@ -141,21 +141,21 @@ CREATE TABLE IF NOT EXISTS tool_call_log (
 );
 
 INSERT INTO knowledge_base (id, name, description, enabled, create_user_id, create_time, update_time)
-SELECT 1, '默认运维知识库', '账号、订单、退款、系统故障与售后处理 SOP', 1, 1, NOW(), NOW()
+SELECT 1, 'Default operations knowledge base', 'Account, order, refund, system fault, and after-sales SOP', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE NOT EXISTS (SELECT 1 FROM knowledge_base WHERE id = 1);
 
 INSERT INTO ticket_category (code, name, description)
-SELECT 'ACCOUNT_LOGIN', '账号登录', '密码错误、验证码、账号冻结、权限异常'
+SELECT 'ACCOUNT_LOGIN', 'Account login', 'Password, verification code, account lock, and permission issues'
 WHERE NOT EXISTS (SELECT 1 FROM ticket_category WHERE code = 'ACCOUNT_LOGIN');
 
 INSERT INTO ticket_category (code, name, description)
-SELECT 'REFUND', '退款售后', '退款失败、到账延迟、订单状态不一致'
+SELECT 'REFUND', 'Refund after-sales', 'Refund failure, delayed arrival, and inconsistent order status'
 WHERE NOT EXISTS (SELECT 1 FROM ticket_category WHERE code = 'REFUND');
 
 INSERT INTO ticket_category (code, name, description)
-SELECT 'SYSTEM_FAULT', '系统故障', '接口报错、页面不可用、性能异常'
+SELECT 'SYSTEM_FAULT', 'System fault', 'API error, unavailable page, and performance incident'
 WHERE NOT EXISTS (SELECT 1 FROM ticket_category WHERE code = 'SYSTEM_FAULT');
 
 INSERT INTO ticket_category (code, name, description)
-SELECT 'ORDER', '订单问题', '订单创建、支付状态、履约状态异常'
+SELECT 'ORDER', 'Order issue', 'Order creation, payment status, and fulfillment status issue'
 WHERE NOT EXISTS (SELECT 1 FROM ticket_category WHERE code = 'ORDER');

@@ -41,6 +41,7 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/smartops_agent?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
       DB_USERNAME: root
       DB_PASSWORD: 123456
+      DB_DRIVER: com.mysql.cj.jdbc.Driver
       AI_ENABLED: ${AI_ENABLED:-false}
       AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
       AI_API_KEY: ${AI_API_KEY:-}

@@ -42,15 +42,9 @@ flowchart LR
 
 ## 本地启动
 
-### 1. 启动依赖
+### 1. 直接本地启动
 
-你的本地数据库账号密码已按 `root / 123456` 配好。先创建数据库：
-
-```sql
-CREATE DATABASE IF NOT EXISTS smartops_agent DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-启动后端：
+后端默认使用内置 H2 文件数据库，IDEA 直接运行 `TicketAgentApplication` 或执行下面命令即可启动，不要求本机先启动 MySQL：
 
 ```bash
 cd agent-backend
@@ -69,8 +63,26 @@ npm run dev
 
 - 前端工作台：http://localhost:5173
 - 后端健康检查：http://localhost:8080/api/health
+- H2 控制台：http://localhost:8080/h2-console
 
-### 2. Docker Compose 一键启动
+H2 JDBC URL：`jdbc:h2:file:./data/smartops-agent;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE`，用户名 `sa`，密码为空。
+
+### 2. 使用本地 MySQL 启动
+
+如果要使用你本地的 MySQL `root / 123456`，先确认 MySQL 服务已启动并监听 `3306`，然后创建数据库：
+
+```sql
+CREATE DATABASE IF NOT EXISTS smartops_agent DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+再用 `mysql` profile 启动：
+
+```bash
+cd agent-backend
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+```
+
+### 3. Docker Compose 一键启动
 
 ```bash
 cd deploy
